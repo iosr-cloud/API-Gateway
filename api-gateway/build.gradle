@@ -7,6 +7,7 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath('se.transmode.gradle:gradle-docker:1.2')
 	}
 }
 
@@ -15,7 +16,6 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 
 group = 'agh.iosr'
-version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
@@ -28,10 +28,6 @@ ext {
 }
 
 dependencies {
-	compile('org.springframework.cloud:spring-cloud-starter-aws')
-	compile('org.springframework.cloud:spring-cloud-starter-aws-jdbc')
-	compile('org.springframework.cloud:spring-cloud-starter-aws-messaging')
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	compileOnly('org.projectlombok:lombok')
@@ -43,3 +39,19 @@ dependencyManagement {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
 	}
 }
+
+apply plugin: 'docker'
+
+task buildDocker(type: Docker, dependsOn: build) {
+	applicationName = jar.baseName
+	push = project.hasProperty('push')
+	dockerfile = file('src/main/docker/Dockerfile')
+	tag = jar.baseName
+	doFirst {
+		copy {
+			from jar
+			into stageDir
+		}
+	}
+}
+buildDocker.dependsOn(build)
