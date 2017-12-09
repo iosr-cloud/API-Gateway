@@ -15,9 +15,9 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 
 @Service
-public class S3Service implements IService {
+public class S3StorageService implements StorageService {
 
-    private Logger logger = LoggerFactory.getLogger(S3Service.class);
+    private Logger logger = LoggerFactory.getLogger(S3StorageService.class);
 
     @Autowired
     private AmazonS3 s3client;
@@ -26,12 +26,12 @@ public class S3Service implements IService {
     private String bucketName;
 
     @Override
-    public void downloadFile(String keyName) {
+    public void downloadFile(String filename) {
 
         try {
 
             System.out.println("Downloading an object");
-            S3Object s3object = s3client.getObject(new GetObjectRequest(bucketName, keyName));
+            S3Object s3object = s3client.getObject(new GetObjectRequest(bucketName, filename));
             System.out.println("Content-Type: "  + s3object.getObjectMetadata().getContentType());
             logger.info("===================== Import File - Done! =====================");
 
@@ -49,13 +49,13 @@ public class S3Service implements IService {
     }
 
     @Override
-    public URL uploadFile(String keyName, String uploadFilePath) {
+    public URL uploadFile(String filename, String uploadFilePath) {
 
         URL fileURL = null;
         try {
             File file = new File(uploadFilePath);
-            s3client.putObject(new PutObjectRequest(bucketName, keyName, file).withCannedAcl(CannedAccessControlList.PublicRead));
-            fileURL = s3client.getUrl(bucketName, keyName);
+            s3client.putObject(new PutObjectRequest(bucketName, filename, file).withCannedAcl(CannedAccessControlList.PublicRead));
+            fileURL = s3client.getUrl(bucketName, filename);
             logger.info("===================== Upload File - Done! =====================");
         } catch (AmazonServiceException ase) {
             logger.info("Caught an AmazonServiceException from PUT requests, rejected reasons:");

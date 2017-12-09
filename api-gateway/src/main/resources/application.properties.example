@@ -3,6 +3,6 @@ jsa.aws.secret_access_key=xxx
 jsa.s3.bucket=iosr-s3
 jsa.s3.region=eu-central-1
 
-jsa.s3.uploadfile=/home/path-to-file/file.txt
-jsa.s3.key=file.txt
+jsa.s3.filepath=/home/path-to-file/file.txt
+jsa.s3.filename=file.txt
 

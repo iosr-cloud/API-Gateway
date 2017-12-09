@@ -1,6 +1,6 @@
 package agh.iosr.controller;
 
-import agh.iosr.storage.services.S3Service;
+import agh.iosr.storage.services.S3StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -14,18 +14,18 @@ import java.net.URL;
 public class UploadController {
 
     @Autowired
-    S3Service s3Service;
+    private S3StorageService s3StorageService;
 
-    @Value("${jsa.s3.uploadfile}")
+    @Value("${jsa.s3.filepath}")
     private String uploadFilePath;
 
-    @Value("${jsa.s3.key}")
-    private String key;
+    @Value("${jsa.s3.filename}")
+    private String filename;
 
     @GetMapping
     public ResponseEntity<String> upload(){
         System.out.println("---------------- START UPLOAD FILE ----------------");
-        URL fileUrl = s3Service.uploadFile(key, uploadFilePath);
+        URL fileUrl = s3StorageService.uploadFile(filename, uploadFilePath);
 
         return ResponseEntity.ok(fileUrl.toString());
     }
