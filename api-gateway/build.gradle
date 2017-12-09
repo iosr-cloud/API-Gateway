@@ -8,12 +8,14 @@ buildscript {
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 		classpath('se.transmode.gradle:gradle-docker:1.2')
+		classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
 	}
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: "io.spring.dependency-management"
 
 group = 'agh.iosr'
 sourceCompatibility = 1.8
@@ -22,12 +24,12 @@ repositories {
 	mavenCentral()
 }
 
-
 ext {
 	springCloudVersion = 'Edgware.RELEASE'
 }
 
 dependencies {
+	compile('com.amazonaws:aws-java-sdk-sqs')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	compileOnly('org.projectlombok:lombok')
@@ -36,7 +38,8 @@ dependencies {
 
 dependencyManagement {
 	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}",
+		mavenBom 'com.amazonaws:aws-java-sdk-bom:1.11.228'
 	}
 }
 
