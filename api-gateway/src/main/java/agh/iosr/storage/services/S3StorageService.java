@@ -1,6 +1,6 @@
 package agh.iosr.storage.services;
 
-import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import com.amazonaws.services.s3.model.*;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class S3StorageService implements StorageService {
@@ -22,7 +23,7 @@ public class S3StorageService implements StorageService {
     @Autowired
     private AmazonS3 s3client;
 
-    @Value("${jsa.s3.bucket}")
+    @Value("${s3.bucket}")
     private String bucketName;
 
     @Override
@@ -49,14 +50,12 @@ public class S3StorageService implements StorageService {
     }
 
     @Override
-    public URL uploadFile(String filename, String uploadFilePath) {
-
+    public URL uploadFile(String filename, MultipartFile uploadFile) {
         URL fileURL = null;
         try {
-            File file = new File(uploadFilePath);
-            s3client.putObject(new PutObjectRequest(bucketName, filename, file).withCannedAcl(CannedAccessControlList.PublicRead));
+            s3client.putObject(new PutObjectRequest(bucketName, filename, uploadFile.getInputStream(), null).withCannedAcl(CannedAccessControlList.PublicRead));
             fileURL = s3client.getUrl(bucketName, filename);
-            logger.info("===================== Upload File - Done! =====================");
+            logger.info("Uploaded File: " + filename);
         } catch (AmazonServiceException ase) {
             logger.info("Caught an AmazonServiceException from PUT requests, rejected reasons:");
             logger.info("Error Message:    " + ase.getMessage());
@@ -67,8 +66,9 @@ public class S3StorageService implements StorageService {
         } catch (AmazonClientException ace) {
             logger.info("Caught an AmazonClientException: ");
             logger.info("Error Message: " + ace.getMessage());
+        } catch (IOException e) {
+            logger.info("File Transform Error");
         }
         return fileURL;
     }
-
 }

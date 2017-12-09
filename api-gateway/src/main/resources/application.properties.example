@@ -1,8 +1,8 @@
-jsa.aws.access_key_id=xxx
-jsa.aws.secret_access_key=xxx
-jsa.s3.bucket=iosr-s3
-jsa.s3.region=eu-central-1
+aws.access_key_id=xxx
+aws.secret_access_key=xxx
+s3.bucket=iosr-s3
+s3.region=eu-central-1
 
-jsa.s3.filepath=/home/path-to-file/file.txt
-jsa.s3.filename=file.txt
+s3.filepath=/home/path-to-file/file.txt
+s3.filename=file.txt
 
