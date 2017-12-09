@@ -16,20 +16,23 @@ public class SQSEventSender implements EventSender {
 
     private Logger logger = LoggerFactory.getLogger(SQSEventSender.class);
     private ObjectMapper mapper = new ObjectMapper();
-
     @Value("${aws.queue.name}")
     private String queueName;
+
     private AmazonSQS amazonSQS;
+    private String queueUrl;
 
     public SQSEventSender(AmazonSQS amazonSQS) {
         this.amazonSQS = amazonSQS;
+        this.queueUrl = amazonSQS.getQueueUrl(queueName).getQueueUrl();
+
     }
 
     @Override
     public void sendEvent(EventMessage message) {
 
         String JSONObject = convertMessageToJSON(message);
-        SendMessageRequest request = createSendMessageRequest(queueName, JSONObject);
+        SendMessageRequest request = createSendMessageRequest(queueUrl, JSONObject);
         amazonSQS.sendMessage(request);
 
         logger.info("Sent message to SQS");
@@ -37,10 +40,7 @@ public class SQSEventSender implements EventSender {
         logger.info("Sent message conversion type: " + message.getConversionType());
     }
 
-    private SendMessageRequest createSendMessageRequest(String queueName, String message){
-
-        String queueUrl = amazonSQS.getQueueUrl(queueName).getQueueUrl();
-
+    private SendMessageRequest createSendMessageRequest(String queueUrl, String message){
         return new SendMessageRequest()
                 .withQueueUrl(queueUrl)
                 .withMessageBody(message);
