@@ -5,3 +5,8 @@ aws.queue.name=xxx
 aws.queue.access_key_id=xxx
 aws.queue.secret=xxx
 aws.region=xxx
+
+spring.datasource.url=jdbc:postgresql://xxx
+spring.datasource.username=xxx
+spring.datasource.password=xxx
+spring.jpa.generate-ddl=true

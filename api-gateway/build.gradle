@@ -29,9 +29,11 @@ ext {
 dependencies {
 	compile('com.amazonaws:aws-java-sdk:1.11.245')
 	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compile group: 'org.postgresql', name: 'postgresql', version: '9.4-1201-jdbc41'
 }
 
 dependencyManagement {
