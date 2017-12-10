@@ -29,9 +29,9 @@ public class UploadService {
         VideoConversionType videoConversionType = VideoConversionType.TWO_TIMES_FASTER;
         URL fileUrl = s3StorageService.uploadFile(userId +"/"+uploadedFile.getOriginalFilename(), uploadedFile);
 
-        eventSender.sendEvent(new EventMessage(userId, fileUrl.toString(), videoConversionType));
-
         VideoData data = new VideoData(userId, uploadedFile.getOriginalFilename(), fileUrl.toString(), videoConversionType);
         videoDataRepository.save(data);
+
+        eventSender.sendEvent(new EventMessage(data.getId(), fileUrl.toString(), videoConversionType));
     }
 }

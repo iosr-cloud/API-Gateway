@@ -13,7 +13,7 @@ import java.io.Serializable;
 @ToString
 public final class EventMessage implements Serializable{
 
-    private final String userId;
+    private final long id;
     private final String resourceURL;
     private final VideoConversionType conversionType;
 }

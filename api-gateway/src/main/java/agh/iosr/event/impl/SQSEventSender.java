@@ -42,6 +42,7 @@ public class SQSEventSender implements EventSender {
         amazonSQS.sendMessage(request);
 
         logger.info("Sent message to SQS");
+        logger.info("Sent message id: " + message.getId());
         logger.info("Sent message URL: " + message.getResourceURL());
         logger.info("Sent message conversion type: " + message.getConversionType());
     }
