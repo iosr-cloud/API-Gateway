@@ -11,11 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+
 @Service
 public class SQSEventSender implements EventSender {
 
     private Logger logger = LoggerFactory.getLogger(SQSEventSender.class);
     private ObjectMapper mapper = new ObjectMapper();
+
     @Value("${aws.queue.name}")
     private String queueName;
 
@@ -24,8 +27,11 @@ public class SQSEventSender implements EventSender {
 
     public SQSEventSender(AmazonSQS amazonSQS) {
         this.amazonSQS = amazonSQS;
-        this.queueUrl = amazonSQS.getQueueUrl(queueName).getQueueUrl();
+    }
 
+    @PostConstruct
+    private void init(){
+        this.queueUrl = amazonSQS.getQueueUrl(queueName).getQueueUrl();
     }
 
     @Override
