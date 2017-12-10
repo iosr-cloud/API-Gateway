@@ -23,7 +23,7 @@ public class S3StorageService implements StorageService {
     @Autowired
     private AmazonS3 s3client;
 
-    @Value("${s3.bucket}")
+    @Value("${aws.s3.bucket}")
     private String bucketName;
 
     @Override
