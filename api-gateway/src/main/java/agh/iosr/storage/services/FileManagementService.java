@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Optional;
 
@@ -29,12 +28,13 @@ public class FileManagementService {
 
     public Optional<S3Object> downloadFile(Long fileId){
 
-        Optional<S3Object> file = Optional.empty();
-        VideoData data = videoDataRepository.findOne(fileId);
+            Optional<S3Object> file = Optional.empty();
+            VideoData data = videoDataRepository.findOne(fileId);
 
-        if(data != null && data.isStatus()){
-            file = s3StorageService.downloadFile(data.getConvertedFilePath());
-        }
+            if(data != null && data.isStatus()){
+                String filename = data.getConvertedFilePath().replaceAll(".*/","");
+                file = s3StorageService.downloadFile(filename);
+            }
 
         return file;
     }

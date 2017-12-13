@@ -24,7 +24,7 @@ public class UploadController {
     private final FileManagementService fileManagementService;
 
     @GetMapping("/{id}")
-    public ResponseEntity download(@PathParam("id") long fileId){
+    public ResponseEntity download(@PathVariable("id") long fileId){
 
         log.info("Downloading file id: " + fileId);
 
@@ -48,7 +48,7 @@ public class UploadController {
     }
 
     @GetMapping("/{id}/status")
-    public ResponseEntity<Boolean> getStatus(@PathParam("id") long fileId){
+    public ResponseEntity<Boolean> getStatus(@PathVariable("id") Long fileId){
 
         log.info("Getting status of file id: " + fileId);
         return ResponseEntity.ok(
