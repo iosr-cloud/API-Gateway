@@ -1,24 +1,25 @@
 package agh.iosr.storage.services;
 
-import java.io.IOException;
-import java.net.URL;
-
-import com.amazonaws.services.s3.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-@Service
-public class S3StorageService implements StorageService {
+import java.io.IOException;
+import java.net.URL;
+import java.util.Optional;
 
-    private Logger logger = LoggerFactory.getLogger(S3StorageService.class);
+@Service
+@Slf4j
+public class S3StorageService implements StorageService {
 
     @Autowired
     private AmazonS3 s3client;
@@ -27,26 +28,28 @@ public class S3StorageService implements StorageService {
     private String bucketName;
 
     @Override
-    public void downloadFile(String filename) {
+    public Optional<S3Object> downloadFile(String filename) {
 
+        S3Object s3object = null;
         try {
 
             System.out.println("Downloading an object");
-            S3Object s3object = s3client.getObject(new GetObjectRequest(bucketName, filename));
+            s3object = s3client.getObject(new GetObjectRequest(bucketName, filename));
             System.out.println("Content-Type: "  + s3object.getObjectMetadata().getContentType());
-            logger.info("===================== Import File - Done! =====================");
+            log.info("===================== Import File - Done! =====================");
 
         } catch (AmazonServiceException ase) {
-            logger.info("Caught an AmazonServiceException from GET requests, rejected reasons:");
-            logger.info("Error Message:    " + ase.getMessage());
-            logger.info("HTTP Status Code: " + ase.getStatusCode());
-            logger.info("AWS Error Code:   " + ase.getErrorCode());
-            logger.info("Error Type:       " + ase.getErrorType());
-            logger.info("Request ID:       " + ase.getRequestId());
+            log.info("Caught an AmazonServiceException from GET requests, rejected reasons:");
+            log.info("Error Message:    " + ase.getMessage());
+            log.info("HTTP Status Code: " + ase.getStatusCode());
+            log.info("AWS Error Code:   " + ase.getErrorCode());
+            log.info("Error Type:       " + ase.getErrorType());
+            log.info("Request ID:       " + ase.getRequestId());
         } catch (AmazonClientException ace) {
-            logger.info("Caught an AmazonClientException: ");
-            logger.info("Error Message: " + ace.getMessage());
+            log.info("Caught an AmazonClientException: ");
+            log.info("Error Message: " + ace.getMessage());
         }
+        return Optional.ofNullable(s3object);
     }
 
     @Override
@@ -55,19 +58,19 @@ public class S3StorageService implements StorageService {
         try {
             s3client.putObject(new PutObjectRequest(bucketName, filename, uploadFile.getInputStream(), null).withCannedAcl(CannedAccessControlList.PublicRead));
             fileURL = s3client.getUrl(bucketName, filename);
-            logger.info("Uploaded File: " + filename);
+            log.info("Uploaded File: " + filename);
         } catch (AmazonServiceException ase) {
-            logger.info("Caught an AmazonServiceException from PUT requests, rejected reasons:");
-            logger.info("Error Message:    " + ase.getMessage());
-            logger.info("HTTP Status Code: " + ase.getStatusCode());
-            logger.info("AWS Error Code:   " + ase.getErrorCode());
-            logger.info("Error Type:       " + ase.getErrorType());
-            logger.info("Request ID:       " + ase.getRequestId());
+            log.info("Caught an AmazonServiceException from PUT requests, rejected reasons:");
+            log.info("Error Message:    " + ase.getMessage());
+            log.info("HTTP Status Code: " + ase.getStatusCode());
+            log.info("AWS Error Code:   " + ase.getErrorCode());
+            log.info("Error Type:       " + ase.getErrorType());
+            log.info("Request ID:       " + ase.getRequestId());
         } catch (AmazonClientException ace) {
-            logger.info("Caught an AmazonClientException: ");
-            logger.info("Error Message: " + ace.getMessage());
+            log.info("Caught an AmazonClientException: ");
+            log.info("Error Message: " + ace.getMessage());
         } catch (IOException e) {
-            logger.info("File Transform Error");
+            log.info("File Transform Error");
         }
         return fileURL;
     }

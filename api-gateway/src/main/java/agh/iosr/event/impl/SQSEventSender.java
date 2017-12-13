@@ -6,17 +6,16 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
 @Service
+@Slf4j
 public class SQSEventSender implements EventSender {
 
-    private Logger logger = LoggerFactory.getLogger(SQSEventSender.class);
     private ObjectMapper mapper = new ObjectMapper();
 
     @Value("${aws.queue.name}")
@@ -41,11 +40,12 @@ public class SQSEventSender implements EventSender {
         SendMessageRequest request = createSendMessageRequest(queueUrl, JSONObject);
         amazonSQS.sendMessage(request);
 
-        logger.info("Sent message to SQS");
-        logger.info("Sent message id: " + message.getId());
-        logger.info("Sent message URL: " + message.getResourceURL());
-        logger.info("Sent message conversion type: " + message.getConversionType());
+        log.info("Sent message to SQS");
+        log.info("Sent message id: " + message.getId());
+        log.info("Sent message URL: " + message.getResourceURL());
+        log.info("Sent message conversion type: " + message.getConversionType());
     }
+
 
     private SendMessageRequest createSendMessageRequest(String queueUrl, String message){
         return new SendMessageRequest()
