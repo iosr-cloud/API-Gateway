@@ -40,9 +40,9 @@ public class UploadController {
             InputStreamResource resource = new InputStreamResource(is);
 
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, s3Object.getObjectMetadata().getContentDisposition())
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+ s3Object.getKey())
+                    .header("Content-Type","video/x-flv")
                     .contentLength(contentLength)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(resource);
         }else{
             return ResponseEntity.notFound().build();
