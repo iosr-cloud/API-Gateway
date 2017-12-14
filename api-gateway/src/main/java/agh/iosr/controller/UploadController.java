@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +40,7 @@ public class UploadController {
             InputStreamResource resource = new InputStreamResource(is);
 
             return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, s3Object.getObjectMetadata().getContentDisposition())
                     .contentLength(contentLength)
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(resource);
