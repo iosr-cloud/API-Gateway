@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,10 +20,10 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class S3StorageService implements StorageService {
 
-    @Autowired
-    private AmazonS3 s3client;
+    private final AmazonS3 s3client;
 
     @Value("${aws.s3.bucket}")
     private String bucketName;
@@ -33,9 +34,8 @@ public class S3StorageService implements StorageService {
         S3Object s3object = null;
         try {
 
-            System.out.println("Downloading an object");
+            log.info("Downloading an object");
             s3object = s3client.getObject(new GetObjectRequest(bucketName, filename));
-            System.out.println("Content-Type: "  + s3object.getObjectMetadata().getContentType());
             log.info("===================== Import File - Done! =====================");
 
         } catch (AmazonServiceException ase) {

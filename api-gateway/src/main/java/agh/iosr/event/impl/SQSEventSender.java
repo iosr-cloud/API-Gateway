@@ -6,27 +6,25 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class SQSEventSender implements EventSender {
-
-    private ObjectMapper mapper = new ObjectMapper();
 
     @Value("${aws.queue.name}")
     private String queueName;
 
-    private AmazonSQS amazonSQS;
+    private final ObjectMapper mapper;
+    private final AmazonSQS amazonSQS;
     private String queueUrl;
-
-    public SQSEventSender(AmazonSQS amazonSQS) {
-        this.amazonSQS = amazonSQS;
-    }
 
     @PostConstruct
     private void init(){
@@ -53,7 +51,6 @@ public class SQSEventSender implements EventSender {
                 .withMessageBody(message);
     }
 
-    //todo better exception handling
     private String convertMessageToJSON(EventMessage message){
          try {
             return mapper.writeValueAsString(message);
